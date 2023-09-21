@@ -1,0 +1,35 @@
+{% extends 'default.html' %}
+{% block title %}
+Messenger
+{% endblock title %}
+{% block content %}
+<h1 align="center">Your Chats</h1>
+
+<!--  <section class="content">-->
+<!--      <div>-->
+<!--          <table>-->
+<!--{% for chat in chats %}-->
+
+<!--              <tr>-->
+<!--            <td>{{ chat.room_name }}</td>-->
+<!--            <td>{{ chat.author }}</td>-->
+<!--            <td><a class="new-button" href="{% url 'room' chat.room_name %}">Open Chat</a></td>-->
+<!--          </tr>-->
+<!--{% endfor %}-->
+<!--</table>-->
+<!--      </div>-->
+  </section>
+
+    <div>
+        {% for user in users %}
+        <table>
+            <tr>
+                <td> {{ user.user.username }} </td>
+                <td> <a class="new-button" href="{% url 'profile' user.pk %}">Open profile</a></td>
+            </tr>
+        </table>
+        {% endfor %}
+    </div>
+
+
+{% endblock content %}

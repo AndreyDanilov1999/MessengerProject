@@ -1,0 +1,15 @@
+{% extends "default.html" %}
+
+{% block title %}
+{% endblock title %}
+
+{% block content %}
+<div>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p><input class="new-button" type="submit" value="Create"></p>
+    </form>
+</div>
+
+{% endblock content %}
