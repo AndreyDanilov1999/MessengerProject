@@ -1,0 +1,11 @@
+{% extends 'default.html' %}
+{% block title %}
+Messenger
+{% endblock title %}
+{% block content %}
+<div align="center">
+    <h1>У Вас нет доступа для просмотра этого чата</h1>
+    <p>Для перехода на главную страницу нажмите <a href="{% url 'index' %}">здесь</a></p>
+</div>
+
+{% endblock content %}

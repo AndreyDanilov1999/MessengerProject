@@ -9,8 +9,8 @@
           <div class="dropdwn" align="right">
             <button onclick="myFunction()" class="dropbtn"> Chat options </button>
               <div id="myDropdown" class="dropdwn-content">
-                <a href="#">Edit</a>
-                <a href="#">Delete</a>
+                <a href="options">Edit</a>
+                <a type="submit" id="delete_chat">Delete</a>
               </div>
           </div>
             <div class="canvas">
@@ -49,6 +49,26 @@
             }
           }
         }
+
+// удаление комнаты
+
+        document.querySelector('#delete_chat').onclick = function(e) {
+
+            const url = "http://127.0.0.1:8000/api/chat/{{chats.id}}";
+
+            fetch(url, {
+            method: "DELETE",
+            headers: {
+              "X-CSRFToken": '{{csrf_token}}',
+              "Content-Type": "application/json",
+              },
+              body: JSON.stringify(),
+            })
+              .then(response => response.json())
+              .then(data => console.log(data))
+              .then(() => { window.location.assign('http://127.0.0.1:8000/messenger/');})
+              .catch(error => console.error(error));
+    }
 
         const roomName = JSON.parse(document.getElementById('json-roomname').textContent);
         const userName = JSON.parse(document.getElementById('json-username').textContent);

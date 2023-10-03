@@ -199,6 +199,11 @@ a.canvas:active {
   text-align: right;
 }
 
+.input-div {
+  padding-top: 20px;
+
+}
+
 body {
   text-align: center;
   background-size: cover;

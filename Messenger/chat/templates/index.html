@@ -3,32 +3,37 @@
 Messenger
 {% endblock title %}
 {% block content %}
-<h1 align="center">Your Chats</h1>
 
-<!--  <section class="content">-->
-<!--      <div>-->
-<!--          <table>-->
-<!--{% for chat in chats %}-->
+  <section class="content">
+      <div class="is-container">
+          <p align="center"><a class="new-button" href="{% url 'my_chats' %}">Мои чаты</a></p>
+      </div>
+<h1 align="center">Rooms</h1>
+      <div>
+          <table>
+{% for chat in chats %}
+              {% if chat.type  == "ROOM" %}
+           <tr>
+                <td>{{ chat.room_name }}</td>
+                <td>{{ chat.author }}</td>
+                <td><a class="new-button" href="{% url 'chat_room' chat.room_name %}">Open Chat</a></td>
 
-<!--              <tr>-->
-<!--            <td>{{ chat.room_name }}</td>-->
-<!--            <td>{{ chat.author }}</td>-->
-<!--            <td><a class="new-button" href="{% url 'room' chat.room_name %}">Open Chat</a></td>-->
-<!--          </tr>-->
-<!--{% endfor %}-->
-<!--</table>-->
-<!--      </div>-->
+               {% endif %}
+          </tr>
+{% endfor %}
+</table>
+      </div>
   </section>
-
+<h1 align="center">List users</h1>
     <div>
-        {% for user in users %}
         <table>
+        {% for user in users %}
             <tr>
-                <td> {{ user.user.username }} </td>
-                <td> <a class="new-button" href="{% url 'profile' user.pk %}">Open profile</a></td>
+                <td> {{ user.name }} </td>
+                <td align="right"> <a class="new-button" href="{% url 'profile' user.pk %}">Open profile</a></td>
             </tr>
-        </table>
         {% endfor %}
+        </table>
     </div>
 
 

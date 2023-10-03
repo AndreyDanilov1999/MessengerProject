@@ -5,6 +5,7 @@ from django.db import models
 class CustomUser(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
+    name = models.CharField(max_length=32, default='no name')
 
     def __str__(self):
         return self.user.username

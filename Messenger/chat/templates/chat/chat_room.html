@@ -1,0 +1,151 @@
+{% extends 'default.html' %}
+
+{% block content %}
+
+<h1 align="center">{{ room_name }}</h1>
+
+<section class="section">
+  <div class="is-container">
+      {% if chat.author == request.user %}
+      <div class="dropdwn" align="right">
+        <button onclick="myFunction()" class="dropbtn"> Chat options </button>
+          <div id="myDropdown" class="dropdwn-content">
+            <a href="options">Edit</a>
+            <a type="submit" id="delete_chat">Delete</a>
+          </div>
+      </div>
+      {% endif %}
+      <div class="dropdwn" align="right">
+        <button onclick="myFunctionList()" class="dropbtn"> Users list </button>
+          <div id="myDropdownList" class="dropdwn-content">
+          <a href="{% url 'profile' chat.author.id %}">Author Room: {{ chat.author.username }}</a>
+          {% for j in participants %}
+              <a href="{% url 'profile' j.id %}">{{j.username}}</a>
+          {% endfor %}
+
+          </div>
+      </div>
+
+        <div class="canvas">
+            <div class="chat-body">
+                <div id="chat-messages">
+                     {% for m in messages %} <div><b> {{ m.author }} </b>: {{ m.content }}<br></div>{% endfor %}
+                </div>
+            </div>
+        </div>
+      <br>
+        <div align="center">
+            <input class="is-input" type="text" placeholder="Message" id="chat-message-input">
+            <a class="new-button" id="chat-message-submit">Send</a>
+        </div>
+  </div>
+</section>
+
+{{ room_name|json_script:"json-roomname" }}
+{{ user.username|json_script:"json-username" }}
+
+<script>
+    function myFunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+    }
+    // Закрыть раскрывающийся список, если пользователь щелкнет за его пределами.
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdwn-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+
+    function myFunctionList() {
+    document.getElementById("myDropdownList").classList.toggle("show");
+    }
+    // Закрыть раскрывающийся список, если пользователь щелкнет за его пределами.
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdwn-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+
+    const roomName = JSON.parse(document.getElementById('json-roomname').textContent);
+    const userName = JSON.parse(document.getElementById('json-username').textContent);
+    const chatSocket = new WebSocket(
+          'ws://'
+          + window.location.host
+          + '/ws/'
+          + 'room/'
+          + roomName
+          + '/'
+        );
+        function scrollToBottom() {
+        let objDiv = document.getElementById("chat-messages");
+        objDiv.scrollTop = objDiv.scrollHeight;
+        };
+        chatSocket.onmessage = function(e) {
+          console.log('onMessage');
+          scrollToBottom();
+        };
+        chatSocket.onclose = function(e) {
+          console.error('The socket closed unexpectedly');
+        };
+        chatSocket.onmessage = function(e) {
+          const data = JSON.parse(e.data);
+            if (data.message) {
+                document.querySelector('#chat-messages').innerHTML += ('<b>' + data.username + '</b>: ' + data.message + '<br>');
+                } else {
+    }
+  };
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+          if (e.keyCode === 13) {
+            document.querySelector('#chat-message-submit').click();
+          }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+          const messageInputDom = document.querySelector('#chat-message-input');
+          const message = messageInputDom.value;
+          if (message != 0) {
+              chatSocket.send(JSON.stringify({
+                'message': message,
+                'username': userName,
+                'room': roomName
+              }));
+              messageInputDom.value = '';
+          }
+
+        };
+
+// удаление комнаты
+
+document.querySelector('#delete_chat').onclick = function(e) {
+    const url = "http://127.0.0.1:8000/api/chat/{{chats.id}}/";
+
+    fetch(url, {
+    method: "DELETE",
+    headers: {
+      "X-CSRFToken": '{{csrf_token}}',
+      "Content-Type": "application/json",
+      },
+      body: JSON.stringify(),
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .then(() => { window.location.assign('http://127.0.0.1:8000/messenger/');})
+      .catch(error => console.error(error));
+}
+    </script>
+{% endblock content %}

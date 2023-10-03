@@ -1,11 +1,17 @@
 {% extends "default.html" %}
 
 {% block content %}
+<br>
+<section class="content">
+    <div class="is-container">
+        <form  method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="new-button" value="Sing up">
+        </form>
+    </div>
+</section>
 
-<form  method="post">
-{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Sing up">
-</form>
 
 {% endblock %}
+

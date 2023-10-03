@@ -1,0 +1,91 @@
+{% extends 'default.html' %}
+
+{% block content %}
+<br>
+<section class="section">
+    <div class="is-container">
+        <div align="center">
+            Название комнаты:
+            <input type="text" placeholder="Room name" class="is-input" id="room-name">
+        </div>
+        <br>
+        <div align="center">
+            Участники:
+            <div id="user-list"></div>
+        </div>
+        <br>
+        <div align="center">
+        <a class="new-button" id="save">Save</a>
+    </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let selectedUsers;
+    const url = "http://127.0.0.1:8000/api/customuser/";
+    let listUsers;
+    let select;
+
+    fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        listUsers = data;
+
+        const listUsersChoice = document.getElementById('user-list');
+        select = document.createElement('select');
+        select.multiple = true;
+
+        listUsers.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.id;
+            option.text = user.name;
+            select.appendChild(option);
+        });
+
+        listUsersChoice.appendChild(select);
+    })
+    .catch(error => console.error(error));
+
+    document.querySelector('#save').onclick = function(e) {
+        let url_1 = "http://127.0.0.1:8000/api/chat/"
+        let newName = document.getElementById("room-name").value;
+        let author = '{{ request.user.id }}';
+        // Corrected the reference to select
+        const selectedOptions = Array.from(select.selectedOptions);
+
+        const selectedUsers = selectedOptions.map(option => option.value);
+
+        if (selectedUsers.length > 0) {
+            const data = {
+                "author": author, // Replace with the actual author value
+                "type": "ROOM",
+                "room_name": newName,
+                "participants": selectedUsers,
+            }
+
+            fetch(url_1, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": '{{csrf_token}}',
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .then(() => { window.location.assign('http://127.0.0.1:8000/messenger/'); })
+            .catch(error => console.error(error));
+        } else {
+            console.error("No participants selected");
+        }
+    }
+});
+</script>
+{% endblock content %}

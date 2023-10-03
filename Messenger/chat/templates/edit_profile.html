@@ -1,0 +1,47 @@
+{% extends 'default.html' %}
+{% block title %}
+Profile
+{% endblock title %}
+{% block content %}
+<div class="is-container">
+    <div class="input-div">
+        Введите Имя:
+        <input class="is-input" type="text" placeholder="first name" id="name-input">
+    </div>
+    <div class="input-div">
+        Загрузите аватарку:
+        <input type="file" id="avatar-input" name="avatar" accept="image/png, image/jpeg" />
+    </div>
+    <br>
+    <div align="center">
+        <a class="new-button" id="edit-save">Save</a>
+    </div>
+</div>
+
+<script>
+    document.querySelector('#edit-save').onclick = function(e) {
+        const url = "http://127.0.0.1:8000/api/customuser/{{user.id}}/";
+        let newName = document.getElementById("name-input").value;
+        let avatarInput = document.getElementById("avatar-input");
+        let newAvatar = avatarInput.files[0]; // Get the selected file
+        const formData = new FormData();
+
+        formData.append("name", newName);
+
+        if (newAvatar) {
+        formData.append("avatar", newAvatar);
+        }
+        fetch (url, {
+            method: "PATCH",
+            headers: {
+              "X-CSRFToken": '{{csrf_token}}',
+            },
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .then(() => { window.location.assign('http://127.0.0.1:8000/profile/{{user.id}}/');})
+        .catch(error => console.error(error));
+    }
+</script>
+{% endblock content %}

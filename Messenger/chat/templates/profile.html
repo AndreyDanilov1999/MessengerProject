@@ -7,11 +7,11 @@ Profile
 {% block content %}
 <div class="is-container">
 {% if user_pk %}
-  <h1>{{ user_pk.user }}</h1>
+  <h1>{{ user_pk.name }}({{ user_pk.user }})</h1>
     <br>
         <div>
             {% if user_pk.avatar %}
-                <img class="image_class" src="http://localhost:8000/media/{{user.avatar}}" alt="{{user_pk.user}}" style="width: 250px; height: 250px;">
+                <img class="image_class" src="http://localhost:8000/media/{{user_pk.avatar}}" alt="{{user_pk.user}}" style="width: 250px; height: 250px;">
             {% else %}
                 <img class="image_class" src="http://localhost:8000/media/default/no-photo.jpg" alt="No Photo" style="width: 250px; height: 250px;">
             {% endif %}
@@ -19,9 +19,9 @@ Profile
     <br>
         <div>
             {% if user_pk != user_2 %}
-                {% if chats %}
+                {% if chat %}
                     <div>
-                        <a class="new-button" href="{% url 'room' chats.room_name %}">Open Chat</a>
+                        <a class="new-button" href="{% url 'room' chat.room_name %}">Open Chat</a>
                     </div>
                 {% else %}
                     <div>
@@ -30,35 +30,42 @@ Profile
                 {% endif %}
             {% endif %}
         </div>
+        <div>
+            {% if user_pk == user_2 %}
+                <a class="new-button" href="{% url 'edit_profile'  user_pk.pk %}">Edit profile</a>
+            {% endif %}
+        </div>
 {% endif %}
 </div>
 
 
 <script>
-document.querySelector('#create_chat').onclick = function(e) {
-    var author = '{{request.user.id}}';
-    var user = '{{user_pk.user}}';
-    var userId = '{{user.id}}';
-    const url = "http://127.0.0.1:8000/api/chat/";
-    const data = {
-    "author": author,
-    "type": "CHAT",
-    "room_name": user,
-    "participants": [userId]
+    document.querySelector('#create_chat').onclick = function(e) {
+        let author = '{{request.user.id}}';
+        let user_2 = '{{request.user}}';
+        let user = '{{user_pk.user}}';
+        let userId = '{{user_pk.user.id}}';
+        const url = "http://127.0.0.1:8000/api/chat/";
+        const data = {
+        "author": author,
+        "type": "CHAT",
+        "room_name": user + user_2,
+        "participants": [userId]
+        };
 
-    };
+            fetch(url, {
+              method: "POST",
+              headers: {
+                "X-CSRFToken": '{{csrf_token}}',
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            })
+              .then(response => response.json())
+              .then(data => console.log(data))
+              .then(() => { window.location.reload();})
+              .catch(error => console.error(error));
 
-        fetch(url, {
-          method: "POST",
-          headers: {
-            "X-CSRFToken": '{{csrf_token}}',
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        })
-          .then(response => response.json())
-          .then(data => console.log(data))
-          .catch(error => console.error(error));
 
 }
 

@@ -1,0 +1,34 @@
+{% extends 'default.html' %}
+{% block title %}
+Messenger
+{% endblock title %}
+{% block content %}
+
+<section class="content">
+    <h1 align="center">My chats</h1>
+    <div>
+        <table>
+        {% for chat in chats_1 %}
+           <tr>
+                <td>{{ chat.room_name }}</td>
+               {% if chat.type == "CHAT" %}
+                <td><a class="new-button" href="{% url 'room' chat.room_name %}">Open Chat</a></td>
+               {% else %}
+               <td><a class="new-button" href="{% url 'chat_room' chat.room_name %}">Open Chat</a></td>
+               {% endif %}
+          </tr>
+        {% endfor %}
+        {% for chat in chats_2 %}
+           <tr>
+                <td>{{ chat.room_name }}</td>
+                {% if chat.type == "CHAT" %}
+                <td><a class="new-button" href="{% url 'room' chat.room_name %}">Open Chat</a></td>
+               {% else %}
+               <td><a class="new-button" href="{% url 'chat_room' chat.room_name %}">Open Chat</a></td>
+               {% endif %}
+          </tr>
+        {% endfor %}
+        </table>
+    </div>
+</section>
+{% endblock content %}

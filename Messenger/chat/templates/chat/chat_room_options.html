@@ -1,0 +1,84 @@
+{% extends 'default.html' %}
+{% block title %}
+Profile
+{% endblock title %}
+{% block content %}
+<section class="section">
+    <div class="is-container">
+        <h2 align="center"> Chat options </h2>
+        <div class="input-div" align="center">
+             Название комнаты:
+            <input class="is-input" type="text" placeholder="room name" id="name-input">
+        </div>
+        <br>
+    <div align="center">
+        <a class="new-button" id="edit-save">Save</a>
+    </div>
+        <br>
+        {% if chats.type == "ROOM" %}
+    <div align="center">
+        <h3 align="center"> Удаление участников из комнаты: </h3>
+        <table>
+            {% for j in participants %}
+            <tr>
+                <td>{{ j.username }}</td>
+                <td><a class="new-button kick-user" id="{{ j.id }}">Kick</a></td>
+            </tr>
+                  {% endfor %}
+        </table>
+    </div>
+        {% endif %}
+</div>
+</section>
+
+
+<script>
+    document.querySelector('#edit-save').onclick = function(e) {
+        const url = "http://127.0.0.1:8000/api/chat/{{chats.id}}/";
+        let newName = document.getElementById("name-input").value;
+        const data = {
+            "room_name": newName,
+        }
+
+        fetch (url, {
+            method: "PATCH",
+            headers: {
+              "X-CSRFToken": '{{csrf_token}}',
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .then(() => { window.location.assign('http://127.0.0.1:8000/messenger/');})
+        .catch(error => console.error(error));
+    }
+
+    // удаление юзеров из комнаты
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('kick-user')) {
+        const userId = e.target.getAttribute('id').trim();
+        const url = "http://127.0.0.1:8000/api/chat/{{chats.id}}/";
+        let members = {{part_id}};
+        const updatedMembers = members.filter(memberId => memberId != userId);
+        console.log(userId, members, updatedMembers)
+        const data = {
+            "participants": updatedMembers
+        }
+
+        fetch (url, {
+            method: "PATCH",
+            headers: {
+              "X-CSRFToken": '{{csrf_token}}',
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .then(() => { window.location.reload() })
+        .catch(error => console.error(error));
+    }
+});
+</script>
+{% endblock content %}

@@ -20,6 +20,7 @@ from django.urls import path, include
 from chat import views
 from django.conf import settings
 from django.conf.urls.static import static
+from chat.views import e_handler500
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,7 +28,10 @@ urlpatterns = [
     path('api/', include('api.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('accounts.urls')),
+    path('my-chats/', views.my_chats, name='my_chats'),
+    path('create-room/', views.create_chat_room, name='room_create'),
     path('profile/<int:pk>/', views.profile, name='profile'),
+    path('profile/<int:pk>/edit', views.edit_profile, name='edit_profile')
 ]
 
 if settings.DEBUG:
@@ -35,3 +39,5 @@ if settings.DEBUG:
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT,
     )
+
+handler500 = e_handler500

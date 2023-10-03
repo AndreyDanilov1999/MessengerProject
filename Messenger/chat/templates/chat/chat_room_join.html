@@ -1,0 +1,35 @@
+{% extends 'default.html' %}
+
+{% block content %}
+
+<h1 align="center">{{ room_name }}</h1>
+<br>
+<p align="center"><a class="new-button" type="submit" id="join-button">Join the Room</a></p>
+
+<script>
+    document.querySelector('#join-button').onclick = function(e) {
+        var members = {{participants}};
+        var userId = {{user.id}};
+        const url = "http://127.0.0.1:8000/api/chat/{{chats.id}}/";
+        const data = {
+        "participants": members.concat(userId)
+        };
+
+            fetch(url, {
+              method: "PATCH",
+              headers: {
+                "X-CSRFToken": '{{csrf_token}}',
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            })
+              .then(response => response.json())
+              .then(data => console.log(data))
+              .then(() => { window.location.reload();})
+              .catch(error => console.error(error));
+
+
+    }
+</script>
+
+{% endblock content %}

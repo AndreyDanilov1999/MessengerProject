@@ -15,6 +15,7 @@ class SignUp(CreateView):
     def form_valid(self, form):
         user = form.save(commit=False)
         user.save()
-        custom = CustomUser.objects.create(user=user, id=user.id)
+        custom = CustomUser.objects.create(user=user, id=user.id, name=user.first_name)
         custom.save()
         return super().form_valid(form)
+

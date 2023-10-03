@@ -1,14 +1,18 @@
+{% extends 'default.html' %}
 
-<html>
-<head></head>
-<body>
-<form method="post" action="{% url 'login' %}">
-{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="login">
-    <input type="hidden" name="next" value="{{ next }}">
-</form>
-</body>
+{% block content %}
+<br>
+<section class="content">
+    <div class="is-container">
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="new-button" value="login">
+            <input type="hidden" class="new-button"  name="next" value="{{ next }}">
+        </form>
+</div>
+</section>
 
 
-</html>
+
+{% endblock %}
